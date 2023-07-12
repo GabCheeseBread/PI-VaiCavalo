@@ -1,22 +1,57 @@
 body {
-	background-color: #b4f0bc;
+	background-color: #88cf92;
 	font-size: 14pt;
+}
+
+p {
+	text-align: justify;
+	margin-left: 15pt;
+	margin-right: 15pt;
 }
 
 .caixa {
 	background-color: #fff;
-	margin: auto 10% auto 10%;
-	border: 2pt solid #777;
-	border-radius: 5pt;
-	padding-left: 20pt;
-	padding-right: 20pt;
+	margin: auto auto 20pt auto;
+	border: 5pt double #cce6d0;
+	border-radius: 15pt;
+	padding: 25pt 20pt 10pt 20pt;
+	width: min(80%,600pt);
+}
+
+.caixa.pequena {
+	width: min(60%,450pt);
 }
 
 .centro {
 	text-align: center;
 }
 
-.centro .imagem {
-	display: block;
-	margin: auto;
+.logo {
+	width: 20%;
+	height: 20%;
+	min-width: 50pt;
+	min-height: 50pt;
+	max-width: 180pt;
+	max-height: 180pt;
+	border: 5pt double #777;
+	border-radius: 5pt;
+}
+
+.colunas {
+	display: flex;
+	justify-content: space-between;
+}
+
+.colunas p {
+	width: 20%;
+	text-align: center;
+	font-size: 18pt;
+}
+
+.colunas p.l {
+	text-align: left;
+}
+
+.colunas p.r {
+	text-align: right;
 }
