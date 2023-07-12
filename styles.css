@@ -1,0 +1,22 @@
+body {
+	background-color: #b4f0bc;
+	font-size: 14pt;
+}
+
+.caixa {
+	background-color: #fff;
+	margin: auto 10% auto 10%;
+	border: 2pt solid #777;
+	border-radius: 5pt;
+	padding-left: 20pt;
+	padding-right: 20pt;
+}
+
+.centro {
+	text-align: center;
+}
+
+.centro .imagem {
+	display: block;
+	margin: auto;
+}
