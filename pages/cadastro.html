@@ -15,15 +15,18 @@
 <body>
 	<script>
 		function validarConta() {
-			let email = document.getElementById("email")
-			let nome = document.getElementById("nome")
-			let senha = document.getElementById("senha")
-			let c_senha = document.getElementById("c_senha")
+			let credenciais = [
+				document.getElementById("email"),
+				document.getElementById("nome"),
+				document.getElementById("senha"),
+				document.getElementById("c_senha")
+			]
 
-			for (let e of [email, nome, senha, c_senha]) {
-				if (e.checkValidity() == false) {
+			for (let i in credenciais) {
+				if (credenciais[i].checkValidity() == false) {
 					return
 				}
+				credenciais[i] = encodeURIComponent(credenciais[i].value)
 			}
 
 			let xhr = new XMLHttpRequest()
@@ -38,12 +41,7 @@
 					}
 				}
 			}
-			xhr.send(
-				`email=${encodeURIComponent(email.value)}
-				&nome=${encodeURIComponent(nome.value)}
-				&senha=${encodeURIComponent(senha.value)}
-				&c_senha=${encodeURIComponent(c_senha.value)}`
-			)
+			xhr.send(`email=${credenciais[0]}&nome=${credenciais[1]}&senha=${credenciais[2]}&c_senha=${credenciais[3]}`)
 		}
 	</script>
 	<div class="caixa centro pequena">
@@ -56,7 +54,7 @@
 			<table cellspacing="10%" style="margin:auto">
 				<tr>
 					<th scope="row"><label for="email">E-mail: </label></th>
-					<td><input type="email" name="email" id="email" required></td>
+					<td><input type="email" name="email" id="email" maxlength="320" required></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="nome">Nome: </label></th>
