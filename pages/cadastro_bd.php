@@ -8,8 +8,6 @@
 	$senha = $_POST["senha"];
 	$c_senha = $_POST["c_senha"];
 	if ($senha != $c_senha) {
-		echo $senha;
-		echo $c_senha;
 		echo "Erro na confirmação de senha.";
 		die();
 	}
@@ -31,8 +29,8 @@
 
 	//admito que não sei se esse === TRUE é necessário
 	if ($conn->query("INSERT INTO usuarios VALUES (NULL,'$email','$nome','$senha')") === TRUE) {
-		echo "Sucesso!";
+		echo "Sucesso";
 	} else {
-		echo "Erro com o banco de dados.";
+		echo "Erro com o banco de dados. Tente novamente mais tarde.";
 	}
 ?>

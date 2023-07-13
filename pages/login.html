@@ -3,23 +3,24 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Agenda VaiCavalo - Cadastro</title>
+	<title>Agenda VaiCavalo - Login</title>
 	<link rel="icon" type="image/x-icon" href="../favicon.ico">
 	<link rel="stylesheet" href="../styles.css">
 	<style>
 		th {
 			text-align:left;
 		}
+		input {
+			background-color: #e6f5e8;
+		}
 	</style>
 </head>
 <body>
 	<script>
-		function validarConta() {
+		function validarLogin() {
 			let credenciais = [
 				document.getElementById("email"),
-				document.getElementById("nome"),
-				document.getElementById("senha"),
-				document.getElementById("c_senha")
+				document.getElementById("senha")
 			]
 
 			for (let i in credenciais) {
@@ -30,23 +31,26 @@
 			}
 
 			let xhr = new XMLHttpRequest()
-			xhr.open("POST","cadastro_bd.php")
+			xhr.open("POST","login_bd.php")
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState == 4 && xhr.status == 200) {
-					if (xhr.responseText == "Sucesso") {
-						window.location.replace("login.html")
+					if (xhr.responseText.startsWith("Sucesso")) {
+						let date = new Date()
+						date.setTime(date.getTime() + 1000*60*24*7)
+						document.cookie = `sessao=${xhr.responseText.substr(8)}; expires=${date.toUTCString()}; path=/`
+						window.location.replace("../index.html")
 					} else {
 						document.getElementById("erro").textContent = xhr.responseText
 					}
 				}
 			}
-			xhr.send(`email=${credenciais[0]}&nome=${credenciais[1]}&senha=${credenciais[2]}&c_senha=${credenciais[3]}`)
+			xhr.send(`email=${credenciais[0]}&senha=${credenciais[1]}`)
 		}
 	</script>
 	<div class="caixa centro pequena">
 		<a href="../index.html"><img class="logo" alt="Logotipo do VaiCavalo" src="../images/cavalo.png"></a>
-		<h1>Cadastro</h1>
+		<h1>Login</h1>
 	</div>
 	<div class="caixa centro pequena">
 		<p id="erro" class="centro" style="color:red"></p>
@@ -54,24 +58,16 @@
 			<table cellspacing="10%" style="margin:auto">
 				<tr>
 					<th scope="row"><label for="email">E-mail: </label></th>
-					<td><input type="email" name="email" id="email" maxlength="320" required></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="nome">Nome: </label></th>
-					<td><input type="text" name="nome" id="nome" minlength="4" maxlength="30" required></td>
+					<td><input type="email" name="email" id="email" required></td>
 				</tr>
 				<tr>
 					<th scope="row"><label for="senha">Senha: </label></th>
-					<td><input type="password" name="senha" id="senha" minlength="8" maxlength="60" required></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="c_senha">Confirmar senha: </label></th>
-					<td><input type="password" name="c_senha" id="c_senha" minlength="8" maxlength="60" required></td>
+					<td><input type="password" name="senha" id="senha" required></td>
 				</tr>
 			</table>
 			<br>
 		</form>
-		<button onclick="validarConta()">Criar conta</button>
+		<button onclick="validarLogin()">Fazer login</button>
 	</div>
 </body>
 </html>
