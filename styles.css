@@ -1,5 +1,5 @@
 body {
-	background-color: #88cf92;
+	background-color: #5f9967;
 	font-size: 16pt;
 	font-family: "Arial";
 }
@@ -9,11 +9,27 @@ p {
 	margin: auto 15pt auto 15pt;
 }
 
+input {
+	background-color: #e38da1;
+}
+
+input:not([type="submit"]):valid {
+	background-color: #e6f5e8;
+}
+
+input[type="submit"], button {
+	width:100pt;
+	height:30pt;
+	font-size:14pt;
+	background-color: #bad6bf;
+	border-color: #e6f5e8 #5f9967 #5f9967 #e6f5e8;
+}
+
 .caixa {
-	background-color: #fff;
+	background-color: #e6f5e8;
 	margin: auto auto 20pt auto;
-	border: 5pt double #cce6d0;
-	border-radius: 15pt;
+	border: 5pt double #bad6bf;
+	border-radius: 25pt;
 	padding: 25pt 20pt 25pt 20pt;
 	width: min(80%,600pt);
 }
@@ -31,14 +47,15 @@ p {
 }
 
 .logo {
-	width: 20%;
-	height: 20%;
+	width: 20vw;
+	height: 20vw;
 	min-width: 50pt;
 	min-height: 50pt;
-	max-width: 180pt;
-	max-height: 180pt;
+	max-width: 150pt;
+	max-height: 150pt;
 	border: 5pt double #777;
 	border-radius: 15pt;
+	background-color: #fff;
 }
 
 .colunas {

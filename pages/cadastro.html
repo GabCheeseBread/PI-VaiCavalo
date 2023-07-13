@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Agenda VaiCavalo - Cadastro</title>
+	<link rel="icon" type="image/x-icon" href="../favicon.ico">
+	<link rel="stylesheet" href="../styles.css">
+	<style>
+		th {
+			text-align:left;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		function validarConta() {
+			let email = document.getElementById("email")
+			let nome = document.getElementById("nome")
+			let senha = document.getElementById("senha")
+			let c_senha = document.getElementById("c_senha")
+
+			for (let e of [email, nome, senha, c_senha]) {
+				if (e.checkValidity() == false) {
+					return
+				}
+			}
+
+			let xhr = new XMLHttpRequest()
+			xhr.open("POST","cadastro_bd.php")
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					if (xhr.responseText == "Sucesso!") {
+						window.location.replace("../index.html")
+					} else {
+						document.getElementById("erro").textContent = xhr.responseText
+					}
+				}
+			}
+			xhr.send(
+				`email=${encodeURIComponent(email.value)}
+				&nome=${encodeURIComponent(nome.value)}
+				&senha=${encodeURIComponent(senha.value)}
+				&c_senha=${encodeURIComponent(c_senha.value)}`
+			)
+		}
+	</script>
+	<div class="caixa centro pequena">
+		<a href="../index.html"><img class="logo" alt="Logotipo do VaiCavalo" src="../images/cavalo.png"></a>
+		<h1>Cadastro</h1>
+	</div>
+	<div class="caixa centro pequena">
+		<p id="erro" class="centro" style="color:red"></p>
+		<form>
+			<table cellspacing="10%" style="margin:auto">
+				<tr>
+					<th scope="row"><label for="email">E-mail: </label></th>
+					<td><input type="email" name="email" id="email" required></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="nome">Nome: </label></th>
+					<td><input type="text" name="nome" id="nome" minlength="4" maxlength="30" required></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="senha">Senha: </label></th>
+					<td><input type="password" name="senha" id="senha" minlength="8" maxlength="60" required></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="c_senha">Confirmar senha: </label></th>
+					<td><input type="password" name="c_senha" id="c_senha" minlength="8" maxlength="60" required></td>
+				</tr>
+			</table>
+			<br>
+		</form>
+		<button onclick="validarConta()">Criar conta</button>
+	</div>
+</body>
+</html>
