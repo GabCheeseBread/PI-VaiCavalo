@@ -1,12 +1,12 @@
 body {
 	background-color: #88cf92;
-	font-size: 14pt;
+	font-size: 16pt;
+	font-family: "Arial";
 }
 
 p {
 	text-align: justify;
-	margin-left: 15pt;
-	margin-right: 15pt;
+	margin: auto 15pt auto 15pt;
 }
 
 .caixa {
@@ -14,12 +14,16 @@ p {
 	margin: auto auto 20pt auto;
 	border: 5pt double #cce6d0;
 	border-radius: 15pt;
-	padding: 25pt 20pt 10pt 20pt;
+	padding: 25pt 20pt 25pt 20pt;
 	width: min(80%,600pt);
 }
 
-.caixa.pequena {
+/*.caixa.media {
 	width: min(60%,450pt);
+}*/
+
+.caixa.pequena {
+	width: min(40%,300pt);
 }
 
 .centro {
@@ -34,24 +38,16 @@ p {
 	max-width: 180pt;
 	max-height: 180pt;
 	border: 5pt double #777;
-	border-radius: 5pt;
+	border-radius: 15pt;
 }
 
 .colunas {
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 }
 
 .colunas p {
 	width: 20%;
 	text-align: center;
 	font-size: 18pt;
-}
-
-.colunas p.l {
-	text-align: left;
-}
-
-.colunas p.r {
-	text-align: right;
 }
