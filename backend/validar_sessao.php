@@ -6,7 +6,7 @@
 
 	$conn = new mysqli("localhost","root","","vc_agenda");
 	if ($conn->connect_errno) {
-		die($conn->connect_error);
+		die();
 	}
 
 	$q = $conn->prepare("SELECT token, email FROM sessoes WHERE token = ?");
@@ -15,6 +15,9 @@
 	$q = $q->get_result();
 
 	if ($q->num_rows > 0) {
-		die("Valido " . $q->fetch_assoc()["email"]);
+		$email = $q->fetch_assoc()["email"];
+		//e-mail é legitimo, logo não é necessario um prepared statement
+		$q2 = $conn->query("SELECT nome FROM usuarios WHERE email = '$email'");
+		echo "Valido " . $email . " " . $q2->fetch_assoc()["nome"];
 	}
 ?>

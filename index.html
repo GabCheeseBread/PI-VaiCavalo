@@ -30,7 +30,7 @@
 			<a href="index.html"><img class="logo" alt="Logotipo do VaiCavalo" src="images/cavalo.png"></a>
 			<p><a href="pages/equipe.html">Equipe</a></p>
 		</div>
-		<h1>Bem-vindo(a)!</h1>
+		<h1 id="bem-vindo">Bem-vindo(a)!</h1>
 		<p class="centro">A agenda VaiCavalo pode ajudar-lhe a organizar suas tarefas, sejam elas escolares, profissionais, ou mesmo pessoais.</p>
 	</div>
 	<div id="autenticar" class="caixa centro pequena" style="display:none">
@@ -42,13 +42,14 @@
 	<div id="painel" class="caixa centro media" style="display:none; padding-top:5pt">
 		<div style="display:flex">
 			<h2 style="text-align:left">Nova tarefa</h2>
+			<p id="resultado"></p>
 		</div>
 		<form>
 			<table>
 				<tr>
-					<th scope="col"><label for="titulo">Título da tarefa:</label></th>
+					<th scope="col"><label for="titulo">Título da tarefa:<span title="Obrigatório" style="color:red">*</span></label></th>
 					<th><label for="prioridade">Prioridade</label></th>
-					<th scope="col"><label for="tags">Tags: <span title="Tarefas com as mesmas tags serão agrupadas juntas, e você poderá filtrá-las facilmente. Separe tags usando vírgulas" style="color:#3670f7">(?)</span></label></th>
+					<th scope="col"><label for="tags">Tags: <span title="Tarefas com as mesmas tags serão agrupadas juntas, e você poderá filtrá-las facilmente. Use vírgulas para separar tags." style="color:#3670f7">(?)</span></label></th>
 				</tr>
 				<tr>
 					<td><input type="text" name="titulo" id="titulo" maxlength="60" required></td>
@@ -70,6 +71,7 @@
 		</form>
 		<button onclick="criarTarefa()">Criar</button>
 	</div>
+	<div id=tarefas></div>
 	<script>
 		//autenticação
 
@@ -79,29 +81,50 @@
 			let parArray = par.split("=")
 			cookies[parArray[0]] = parArray[1] //ex.: cookies["sessao"] = 4fae6b1c359c11b54cbb
 		}
-		
-		if (cookies.sessao == undefined) {
-			document.getElementById("painel").style.display = ""
-		} else {
-			let xhr = new XMLHttpRequest()
-			xhr.open("POST","pages/validar_sessao.php")
-			xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
-			xhr.onreadystatechange = function() {
-				if (xhr.readyState == 4 && xhr.status == 200) {
-					if (xhr.responseText.startsWith("Valido")) {
-						document.getElementById("painel").style.display = ""
-					} else {
-						document.getElementById("autenticar").style.display = ""
+
+		let tarefas
+
+		if (cookies.sessao != undefined) {
+			//não queria enviar tantos XHRs mas é o jeito
+			for (let i = 0; i <= 1; i++) {
+				let xhr = new XMLHttpRequest()
+
+				let urls = ["backend/validar_sessao.php","backend/receber_tarefas.php"]
+
+				xhr.open("POST",urls[i])
+				xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						switch (i) {
+							case 0:
+								if (xhr.responseText.startsWith("Valido")) {
+									document.getElementById("painel").style.display = ""
+									let resposta = xhr.responseText.split(" ")
+									resposta.shift()
+									let [email, nome] = [resposta[0],resposta[1]]
+									document.getElementById("bem-vindo").textContent = `Bem-vindo(a), ${nome}!`
+								} else {
+									document.getElementById("autenticar").style.display = ""
+								}
+								break
+							case 1:
+								tarefas = JSON.parse(xhr.responseText)
+								alert(tarefas)
+								break
+						}
 					}
 				}
+				xhr.send(`sessao=${encodeURIComponent(cookies.sessao)}`)
 			}
-			xhr.send(`sessao=${encodeURIComponent(cookies.sessao)}`)
+		} else {
+			document.getElementById("autenticar").style.display = ""
 		}
 
 		//funções da página
 
 		document.getElementById("cData").checked = false
 		document.getElementById("prioridade").value = 3
+		document.getElementById("data").value = ""
 		function escolherData(caixa) {
 			let data = document.getElementById("data")
 			if (caixa.checked) {
@@ -110,29 +133,38 @@
 			} else {
 				data.style.visibility = "hidden"
 				data.removeAttribute("required","")
+				data.value = ""
 			}
 		}
 		function atualizarNum(n) {
 			document.getElementById("prNumero").textContent = n
 		}
 		function criarTarefa() {
-			if (!document.getElementById("titulo").checkValidity()) {
+			if (!document.getElementById("titulo").checkValidity() || cookies == undefined) {
 				return
 			}
 			let credenciais = ["titulo","descricao","prioridade","data","tags"]
-			let msg = ""
+			let msg = `token=${cookies.sessao}`
 			for (let i in credenciais) {
-				msg += `${credenciais[i]}=${encodeURIComponent(document.getElementById(credenciais[i]).value)};`
+				msg += `&${credenciais[i]}=${encodeURIComponent(document.getElementById(credenciais[i]).value)}`
 			}
 			let xhr = new XMLHttpRequest()
-			xhr.open("POST","pages/enviar_tarefa.php")
+			xhr.open("POST","backend/enviar_tarefa.php")
 			xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState == 4 && xhr.status == 200) {
-
+					let r = document.getElementById("resultado")
+					if (xhr.responseText == "Sucesso") {
+						r.textContent = "Sucesso!"
+						r.style.color = "#3670f7"
+						location.reload()
+					} else {
+						r.textContent = "Houve um erro. Tente novamente."
+						r.style.color = "red"
+					}
 				}
 			}
-			xhr.send()
+			xhr.send(msg)
 		}
 	</script>
 </body>

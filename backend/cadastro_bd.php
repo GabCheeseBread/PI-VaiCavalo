@@ -12,8 +12,7 @@
 
 	$conn = new mysqli("localhost","root","","vc_agenda");
 	if ($conn->connect_errno) {
-		echo "Erro com o banco de dados. Tente novamente mais tarde.";
-		die($conn->connect_error);
+		die("Erro com o banco de dados. Tente novamente mais tarde.");
 	}
 
 	$q = $conn->prepare("SELECT email FROM usuarios WHERE email = ?");
@@ -28,8 +27,8 @@
 	$q2 = $conn->prepare("INSERT INTO usuarios VALUES (NULL,?,?,?)");
 	$q2->bind_param("sss",$email,$nome,$senha);
 
-	//admito que não sei se esse === TRUE é necessário
-	if ($q2->execute() === TRUE) {
+	//admito que não sei se esse === true é necessário
+	if ($q2->execute() === true) {
 		echo "Sucesso";
 	} else {
 		echo "Erro com o banco de dados. Tente novamente mais tarde.";
