@@ -13,16 +13,20 @@ input {
 	background-color: #e38da1;
 }
 
-input:not([type="submit"]):valid {
-	background-color: #e6f5e8;
-}
-
 input[type="submit"], button {
 	width:100pt;
 	height:30pt;
 	font-size:14pt;
 	background-color: #bad6bf;
 	border-color: #e6f5e8 #5f9967 #5f9967 #e6f5e8;
+}
+
+textarea {
+	border: 2px inset #e3e3e3;
+}
+
+th {
+	text-align:center;
 }
 
 .caixa {
@@ -34,9 +38,9 @@ input[type="submit"], button {
 	width: min(80%,600pt);
 }
 
-/*.caixa.media {
+.caixa.media {
 	width: min(60%,450pt);
-}*/
+}
 
 .caixa.pequena {
 	width: min(40%,300pt);

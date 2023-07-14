@@ -7,8 +7,8 @@
 	<link rel="icon" type="image/x-icon" href="../favicon.ico">
 	<link rel="stylesheet" href="../styles.css">
 	<style>
-		th {
-			text-align:left;
+		input:not([type="submit"]):valid {
+			background-color: #e6f5e8;
 		}
 	</style>
 </head>
@@ -23,7 +23,7 @@
 			]
 
 			for (let i in credenciais) {
-				if (credenciais[i].checkValidity() == false) {
+				if (!credenciais[i].checkValidity()) {
 					return
 				}
 				credenciais[i] = encodeURIComponent(credenciais[i].value)

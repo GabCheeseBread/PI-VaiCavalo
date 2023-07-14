@@ -6,6 +6,22 @@
 	<title>Agenda VaiCavalo - Página Inicial</title>
 	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	<link rel="stylesheet" href="styles.css">
+	<style>
+		input {
+			background-color: #fff;
+		}
+		input[type="text"], textarea {
+			width: 180pt;
+			resize: none;
+		}
+		input[type="checkbox"] {
+    		transform: scale(1.5);
+    		width: auto;
+		}
+		th, td {
+			padding-right: 10pt;
+		}
+	</style>
 </head>
 <body>
 	<div class="caixa centro">
@@ -17,14 +33,107 @@
 		<h1>Bem-vindo(a)!</h1>
 		<p class="centro">A agenda VaiCavalo pode ajudar-lhe a organizar suas tarefas, sejam elas escolares, profissionais, ou mesmo pessoais.</p>
 	</div>
-	<div class="caixa centro pequena">
+	<div id="autenticar" class="caixa centro pequena" style="display:none">
 		<p class="centro" style="font-size:24pt; line-height: 170%"><a href="pages/login.html">Faça login</a>
 			<br>ou
 			<br><a href="pages/cadastro.html">crie uma conta</a>
 		</p>
 	</div>
+	<div id="painel" class="caixa centro media" style="display:none; padding-top:5pt">
+		<div style="display:flex">
+			<h2 style="text-align:left">Nova tarefa</h2>
+		</div>
+		<form>
+			<table>
+				<tr>
+					<th scope="col"><label for="titulo">Título da tarefa:</label></th>
+					<th><label for="prioridade">Prioridade</label></th>
+					<th scope="col"><label for="tags">Tags: <span title="Tarefas com as mesmas tags serão agrupadas juntas, e você poderá filtrá-las facilmente. Separe tags usando vírgulas" style="color:#3670f7">(?)</span></label></th>
+				</tr>
+				<tr>
+					<td><input type="text" name="titulo" id="titulo" maxlength="60" required></td>
+					<td><input type="range" name="prioridade" id="prioridade" min="1" max="5" oninput="atualizarNum(this.value)"></td>
+					<td rowspan="3"><textarea name="tags" id="tags" maxlength="56" cols="14" rows="3" style="width:75pt"></textarea></td>
+				</tr>
+				<tr>
+					<th scope="col"><label for="descricao">Descrição:</label></th>
+					<td><p class="centro" id="prNumero">3</p></td>
+				</tr>
+				<tr>
+					<td rowspan="2"><textarea name="descricao" id="descricao" maxlength="136" cols="34" rows="3"></textarea></td>
+					<td><input type="checkbox" name="cData" id="cData" onchange="escolherData(this)"><label for="cData"> Com <abbr title="Data de entrega">DDE</abbr></label></td>
+				</tr>
+				<tr>
+					<td><input type="date" name="data" id="data" style="visibility: hidden"></td>
+				</tr>
+			</table>
+		</form>
+		<button onclick="criarTarefa()">Criar</button>
+	</div>
 	<script>
-		let cookieStrings = decodeURIComponent(document.cookie).split(";")
+		//autenticação
+
+		let cookiesString = decodeURIComponent(document.cookie).split(";")
+		let cookies = []
+		for (let par of cookiesString) {
+			let parArray = par.split("=")
+			cookies[parArray[0]] = parArray[1] //ex.: cookies["sessao"] = 4fae6b1c359c11b54cbb
+		}
+		
+		if (cookies.sessao == undefined) {
+			document.getElementById("painel").style.display = ""
+		} else {
+			let xhr = new XMLHttpRequest()
+			xhr.open("POST","pages/validar_sessao.php")
+			xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					if (xhr.responseText.startsWith("Valido")) {
+						document.getElementById("painel").style.display = ""
+					} else {
+						document.getElementById("autenticar").style.display = ""
+					}
+				}
+			}
+			xhr.send(`sessao=${encodeURIComponent(cookies.sessao)}`)
+		}
+
+		//funções da página
+
+		document.getElementById("cData").checked = false
+		document.getElementById("prioridade").value = 3
+		function escolherData(caixa) {
+			let data = document.getElementById("data")
+			if (caixa.checked) {
+				data.style.visibility = "visible"
+				data.setAttribute("required","")
+			} else {
+				data.style.visibility = "hidden"
+				data.removeAttribute("required","")
+			}
+		}
+		function atualizarNum(n) {
+			document.getElementById("prNumero").textContent = n
+		}
+		function criarTarefa() {
+			if (!document.getElementById("titulo").checkValidity()) {
+				return
+			}
+			let credenciais = ["titulo","descricao","prioridade","data","tags"]
+			let msg = ""
+			for (let i in credenciais) {
+				msg += `${credenciais[i]}=${encodeURIComponent(document.getElementById(credenciais[i]).value)};`
+			}
+			let xhr = new XMLHttpRequest()
+			xhr.open("POST","pages/enviar_tarefa.php")
+			xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+
+				}
+			}
+			xhr.send()
+		}
 	</script>
 </body>
 </html>
