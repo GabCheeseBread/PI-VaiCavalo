@@ -26,7 +26,7 @@
 <body>
 	<div class="caixa centro">
 		<div class="colunas" style="min-height: 100pt">
-			<p><a href="sobre.html">Sobre</a></p>
+			<p><a href="pages/sobre.html">Sobre</a></p>
 			<a href="index.html"><img class="logo" alt="Logotipo do VaiCavalo" src="images/cavalo.png"></a>
 			<p><a href="pages/equipe.html">Equipe</a></p>
 		</div>
@@ -41,8 +41,9 @@
 	</div>
 	<div id="painel" class="caixa centro media" style="display:none; padding-top:5pt">
 		<div style="display:flex">
-			<h2 style="text-align:left">Nova tarefa</h2>
-			<p id="resultado"></p>
+			<h2 style="text-align:left; width:50%">Nova tarefa</h2>
+			<p id="resultado" style="width:35%"></p>
+			<p><a href="" onclick="limparCookies()" style="width:15%">Sair</a></p>
 		</div>
 		<form>
 			<table>
@@ -58,7 +59,7 @@
 				</tr>
 				<tr>
 					<th scope="col"><label for="descricao">Descrição:</label></th>
-					<td><p class="centro" id="prNumero">3</p></td>
+					<td><p class="centro" id="prNumero">Moderada</p></td>
 				</tr>
 				<tr>
 					<td rowspan="2"><textarea name="descricao" id="descricao" maxlength="136" cols="34" rows="3"></textarea></td>
@@ -108,8 +109,7 @@
 								}
 								break
 							case 1:
-								tarefas = JSON.parse(xhr.responseText)
-								alert(tarefas)
+								mostrarTarefas(JSON.parse(xhr.responseText))
 								break
 						}
 					}
@@ -121,6 +121,8 @@
 		}
 
 		//funções da página
+
+		const nomesPrioridade = ["Sem pressa","Baixa","Moderada","Alta","Urgente"]
 
 		document.getElementById("cData").checked = false
 		document.getElementById("prioridade").value = 3
@@ -137,7 +139,10 @@
 			}
 		}
 		function atualizarNum(n) {
-			document.getElementById("prNumero").textContent = n
+			document.getElementById("prNumero").textContent = nomesPrioridade[n-1]
+		}
+		function limparCookies() {
+			document.cookie = `sessao=${cookies.sessao}; expires=${new Date().toUTCString()}; path=/`
 		}
 		function criarTarefa() {
 			if (!document.getElementById("titulo").checkValidity() || cookies == undefined) {
@@ -165,6 +170,72 @@
 				}
 			}
 			xhr.send(msg)
+		}
+		function confirmarConcluir(caixa,idtarefa) {
+			let botao = document.getElementById(`concluir_${idtarefa}`)
+			if (caixa.checked) {
+				botao.style.visibility = "visible"
+			} else {
+				botao.style.visibility = "hidden"
+			}
+		}
+		function concluirTarefa(idtarefa) {
+
+		}
+		function mostrarTarefas(tarefas) {
+			let html = ''
+			for (tarefa of tarefas) {
+				let cor = "#000"
+				//formatar a data
+				switch (tarefa.data) {
+					case "0000-00-00":
+						tarefa.data = "Sem data"
+						break
+					default:
+						let diaTarefa = new Date(Date.parse(tarefa.data))
+						let hoje = new Date()
+						let diffDias = (diaTarefa.getTime() - hoje.getTime())/1000/60/60/24
+						let urgencia = Math.max(0,(10 - Math.max(0,diffDias)))*(0.25 + 0.25*tarefa.prioridade)
+
+						if (diffDias < 0) {
+							cor = "#AAA"
+						} else if (urgencia > 12) {
+							cor = "#f71a16"
+						} else if (urgencia > 5) {
+							cor = "#f2993f"
+						}
+
+						tarefa.data = `${diaTarefa.getDate() + 1}/${diaTarefa.getMonth() + 1}`
+						if (diaTarefa.getFullYear() == hoje.getFullYear()) {
+							break //não mostrar o ano se for o atual
+						}
+						tarefa.data += `/${diaTarefa.getFullYear()}`
+						break
+				}
+				let corBorda = ""
+				if (cor != "#000") {
+					corBorda = `border-color: ${cor}`
+				}
+				let idtarefa = tarefas.indexOf(tarefa)
+				//escrever o html
+				html += `<div class="centro caixa comprida" style="padding-top:5pt; padding-bottom:5pt; ${corBorda}">
+						<div class="colunas">
+							<h2 class="titulo" style="color:${cor}">${tarefa.titulo}</h2>
+							<p style="color:${cor};font-size:24pt">${tarefa.data}</p>
+						</div>
+						<div style="display:flex;align-items:center">
+							<p class="caixa dentro" style="width:33%;word-wrap:break-word;margin-right:5%">${tarefa.descricao}</p>
+							<div style="display:block;width:33%">
+								<p style="font-size:20pt">Prioridade:<br><span style="font-weight:bold">${nomesPrioridade[tarefa.prioridade - 1]}</span></p>
+							</div>
+							<div style="display:block">
+								<input type="checkbox" id="concluida_${idtarefa}" onclick="confirmarConcluir(this,${idtarefa})" style="transform:scale(2)">
+								<button id="concluir_${idtarefa}" onclick="concluirTarefa(${idtarefa})" style="visibility:hidden">Concluir</button>
+							</div>
+						</div>
+				</div>`
+			}
+			document.getElementById("tarefas").innerHTML = html
 		}
 	</script>
 </body>

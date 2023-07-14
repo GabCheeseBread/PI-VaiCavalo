@@ -38,6 +38,15 @@ th {
 	width: min(80%,600pt);
 }
 
+.caixa.dentro {
+	background-color: #fff;
+	margin: initial;
+}
+
+.caixa.comprida {
+	width: min(90%,800pt);
+}
+
 .caixa.media {
 	width: min(60%,450pt);
 }
@@ -67,8 +76,17 @@ th {
 	justify-content: center;
 }
 
+.colunas.l {
+	justify-content: left;
+}
+
 .colunas p {
 	width: 20%;
 	text-align: center;
 	font-size: 18pt;
+}
+
+.titulo {
+	width:100%;
+	border-bottom:2pt dashed #bad6bf;
 }
